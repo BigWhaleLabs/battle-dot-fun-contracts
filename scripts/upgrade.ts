@@ -4,8 +4,8 @@ async function main() {
   const factory = await ethers.getContractFactory('MemecoinRouter')
   const proxyAddress =
     network.name === 'testnet'
-      ? '0x2afd25e8aDFe037b79c25D1518ac9A6b8136Fd3e'
-      : '0x0dfdbe6284ed9b97aecaef1c8cffe00b46d94e71'
+      ? '0xC763f3d8AD1f21407C862503d1E5cD7b55373F89'
+      : '0x3D8B7Ed20e31cd9CA6Ca275fcbDE32Af26E17585'
   console.log('Upgrading MemecoinRouter...')
   const contract = await upgrades.upgradeProxy(proxyAddress as string, factory)
   console.log('MemecoinRouter upgraded')
