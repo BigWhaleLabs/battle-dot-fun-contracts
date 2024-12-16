@@ -1,17 +1,22 @@
-import { ethers } from 'hardhat'
+import { ZeroAddress } from 'ethers'
+import { ethers, upgrades } from 'hardhat'
 import { expect } from 'chai'
 
 describe('MemecoinRouter contract tests', () => {
-  before(async function () {
-    const accounts = await ethers.getSigners()
-    this.owner = accounts[0]
-    this.factory = await ethers.getContractFactory('MemecoinRouter')
+  let owner
+
+  beforeEach(async function () {
+    ;[owner] = await ethers.getSigners()
+    this.MemecoinRouter = await ethers.getContractFactory('MemecoinRouter')
+    this.memecoinRouter = await upgrades.deployProxy(this.MemecoinRouter, [
+      owner.address,
+      ZeroAddress,
+    ])
   })
 
-  describe('Constructor', function () {
-    it('should deploy the contract with the correct fields', async function () {
-      const contract = await this.factory.deploy(this.owner.address)
-      expect(await contract.owner()).to.equal(this.owner.address)
+  describe('Initialization', function () {
+    it('should have correct initial values', async function () {
+      expect(await this.memecoinRouter.owner()).to.equal(owner)
     })
   })
 })
