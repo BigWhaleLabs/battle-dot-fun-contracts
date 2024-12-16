@@ -24,6 +24,8 @@
     "test": "npx hardhat test",
     "deploy-mainnet": "npx hardhat run --network mainnet scripts/deploy.ts",
     "deploy-testnet": "npx hardhat run --network testnet scripts/deploy.ts",
+    "upgrade-mainnet": "npx hardhat run --network mainnet scripts/upgrade.ts",
+    "upgrade-testnet": "npx hardhat run --network testnet scripts/upgrade.ts",
     "eth-lint": "yarn solhint 'contracts/**/*.sol'",
     "lint": "prettier --check . && eslint --max-warnings 0 scripts test && yarn eth-lint",
     "release": "np",
