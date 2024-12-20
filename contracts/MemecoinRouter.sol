@@ -72,6 +72,11 @@ contract MemecoinRouter is OwnableUpgradeable, ReentrancyGuardUpgradeable {
   // Events
 
   event SetRouter(address indexed router);
+  event Swapped(
+    address indexed sender,
+    ISwapRouter.ExactInputSingleParams[] params,
+    uint256[] amountsOut
+  );
 
   // Initializer
 
@@ -101,5 +106,7 @@ contract MemecoinRouter is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     for (uint256 i = 0; i < params.length; i++) {
       amountsOut[i] = router.exactInputSingle(params[i]);
     }
+    emit Swapped(msg.sender, params, amountsOut);
+    return amountsOut;
   }
 }
