@@ -97,6 +97,12 @@ contract MemecoinRouter is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     emit SetRouter(newRouter);
   }
 
+  // Getters
+
+  function getRouter() public view returns (address) {
+    return address(router);
+  }
+
   // Swaps
 
   function swap(
