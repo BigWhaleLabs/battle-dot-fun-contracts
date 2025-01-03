@@ -62,6 +62,7 @@ pragma solidity ^0.8.28;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@uniswap/swap-router-contracts/contracts/interfaces/IV3SwapRouter.sol";
 
 contract MemecoinRouter is OwnableUpgradeable, ReentrancyGuardUpgradeable {
@@ -108,6 +109,24 @@ contract MemecoinRouter is OwnableUpgradeable, ReentrancyGuardUpgradeable {
   function swap(
     IV3SwapRouter.ExactInputSingleParams[] memory params
   ) public nonReentrant returns (uint256[] memory amountsOut) {
+    // Check allowances
+    for (uint256 i = 0; i < params.length; i++) {
+      IERC20 tokenIn = IERC20(params[i].tokenIn);
+      if (
+        tokenIn.allowance(address(this), address(router)) < params[i].amountIn
+      ) {
+        tokenIn.approve(address(router), type(uint256).max);
+      }
+    }
+    // Transfer tokens to this contract
+    for (uint256 i = 0; i < params.length; i++) {
+      IERC20(params[i].tokenIn).transferFrom(
+        msg.sender,
+        address(this),
+        params[i].amountIn
+      );
+    }
+    // Swap coins
     amountsOut = new uint256[](params.length);
     for (uint256 i = 0; i < params.length; i++) {
       amountsOut[i] = router.exactInputSingle(params[i]);
