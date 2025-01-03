@@ -62,19 +62,19 @@ pragma solidity ^0.8.28;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
-import "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
+import "@uniswap/swap-router-contracts/contracts/interfaces/IV3SwapRouter.sol";
 
 contract MemecoinRouter is OwnableUpgradeable, ReentrancyGuardUpgradeable {
   // State
 
-  ISwapRouter router;
+  IV3SwapRouter router;
 
   // Events
 
   event SetRouter(address indexed router);
   event Swapped(
     address indexed sender,
-    ISwapRouter.ExactInputSingleParams[] params,
+    IV3SwapRouter.ExactInputSingleParams[] params,
     uint256[] amountsOut
   );
 
@@ -87,13 +87,13 @@ contract MemecoinRouter is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     __Ownable_init(initialOwner);
     __ReentrancyGuard_init();
 
-    router = ISwapRouter(initialRouter);
+    router = IV3SwapRouter(initialRouter);
   }
 
   // Setters
 
   function setRouter(address newRouter) public onlyOwner {
-    router = ISwapRouter(newRouter);
+    router = IV3SwapRouter(newRouter);
     emit SetRouter(newRouter);
   }
 
@@ -106,7 +106,7 @@ contract MemecoinRouter is OwnableUpgradeable, ReentrancyGuardUpgradeable {
   // Swaps
 
   function swap(
-    ISwapRouter.ExactInputSingleParams[] memory params
+    IV3SwapRouter.ExactInputSingleParams[] memory params
   ) public nonReentrant returns (uint256[] memory amountsOut) {
     amountsOut = new uint256[](params.length);
     for (uint256 i = 0; i < params.length; i++) {
