@@ -5,7 +5,7 @@ async function main() {
   const proxyAddress =
     network.name === 'testnet'
       ? '0xC763f3d8AD1f21407C862503d1E5cD7b55373F89'
-      : '0x3D8B7Ed20e31cd9CA6Ca275fcbDE32Af26E17585'
+      : '0x863DE4cB1AB2d620C365eA4Acb4a948511D2b11A'
   console.log('Upgrading MemecoinRouter...')
   const contract = await upgrades.upgradeProxy(proxyAddress as string, factory)
   console.log('MemecoinRouter upgraded')
