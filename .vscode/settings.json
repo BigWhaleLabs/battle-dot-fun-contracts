@@ -21,6 +21,7 @@
     "Initializable",
     "Memecoin",
     "Memecoins",
+    "multihop",
     "nomicfoundation",
     "Reentrancy"
   ],

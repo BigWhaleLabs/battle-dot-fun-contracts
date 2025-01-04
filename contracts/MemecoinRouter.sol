@@ -78,6 +78,11 @@ contract MemecoinRouter is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     IV3SwapRouter.ExactInputSingleParams[] params,
     uint256[] amountsOut
   );
+  event MultihopSwapped(
+    address indexed sender,
+    IV3SwapRouter.ExactInputParams[] params,
+    uint256[] amountsOut
+  );
 
   // Initializer
 
@@ -106,20 +111,43 @@ contract MemecoinRouter is OwnableUpgradeable, ReentrancyGuardUpgradeable {
 
   // Swaps
 
+  function multihopSwap(
+    address[] memory tokenIns,
+    IV3SwapRouter.ExactInputParams[] memory params
+  ) public nonReentrant returns (uint256[] memory amountsOut) {
+    for (uint256 i = 0; i < params.length; i++) {
+      // Check allowances
+      IERC20 tokenIn = IERC20(tokenIns[i]);
+      if (
+        tokenIn.allowance(address(this), address(router)) < params[i].amountIn
+      ) {
+        tokenIn.approve(address(router), type(uint256).max);
+      }
+      // Transfer tokens to this contract
+      tokenIn.transferFrom(msg.sender, address(this), params[i].amountIn);
+    }
+    // Swap coins
+    amountsOut = new uint256[](params.length);
+    for (uint256 i = 0; i < params.length; i++) {
+      amountsOut[i] = router.exactInput(params[i]);
+    }
+    emit MultihopSwapped(msg.sender, params, amountsOut);
+    return amountsOut;
+  }
+
   function swap(
     IV3SwapRouter.ExactInputSingleParams[] memory params
   ) public nonReentrant returns (uint256[] memory amountsOut) {
-    // Check allowances
     for (uint256 i = 0; i < params.length; i++) {
+      // Check allowances
       IERC20 tokenIn = IERC20(params[i].tokenIn);
       if (
         tokenIn.allowance(address(this), address(router)) < params[i].amountIn
       ) {
         tokenIn.approve(address(router), type(uint256).max);
       }
-    }
-    // Transfer tokens to this contract
-    for (uint256 i = 0; i < params.length; i++) {
+
+      // Transfer tokens to this contract
       IERC20(params[i].tokenIn).transferFrom(
         msg.sender,
         address(this),
